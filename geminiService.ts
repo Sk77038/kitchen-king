@@ -2,7 +2,11 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult, Preferences } from "./types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+// Safe access to API Key. In Vite/Browser, process might be mocked via index.html or undefined.
+// We use the global process mock from index.html if available to prevent crashes.
+const apiKey = process.env.API_KEY || (window as any).process?.env?.API_KEY || "";
+
+const ai = new GoogleGenAI({ apiKey: apiKey });
 
 const responseSchema = {
   type: Type.OBJECT,
@@ -72,6 +76,10 @@ export const analyzeFridgeImage = async (
   base64Image: string,
   preferences: Preferences
 ): Promise<AnalysisResult> => {
+  if (!apiKey) {
+    throw new Error("API Key is missing. Please check your environment variables.");
+  }
+
   const model = "gemini-3-flash-preview";
   const prompt = getSystemPrompt(preferences, "an image of a refrigerator's contents");
 
@@ -104,6 +112,10 @@ export const searchRecipesByIngredients = async (
   ingredients: string,
   preferences: Preferences
 ): Promise<AnalysisResult> => {
+  if (!apiKey) {
+    throw new Error("API Key is missing. Please check your environment variables.");
+  }
+
   const model = "gemini-3-flash-preview";
   const prompt = getSystemPrompt(preferences, `the user manually typed these ingredients: ${ingredients}`);
 
@@ -125,6 +137,8 @@ export const getIngredientSubstitution = async (
   recipeName: string,
   availableIngredients: string[] = []
 ): Promise<string> => {
+  if (!apiKey) return "API Key missing";
+
   const model = "gemini-3-flash-preview";
   const contextItems = availableIngredients.length > 0 
     ? `Available ingredients in kitchen: ${availableIngredients.join(", ")}.`
