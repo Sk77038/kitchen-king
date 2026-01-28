@@ -3,8 +3,7 @@ import { AnalysisResult, Preferences } from "./types";
 
 // Safe initialization:
 // We use process.env.API_KEY if available.
-// If it's missing (e.g. during initial load or build), we use a placeholder string to prevent the app from crashing immediately with "API key required".
-// The actual API call will fail gracefully with an error message instead of a blank white screen.
+// If it's missing, we use a placeholder. The App will catch the error when user tries to use it.
 const apiKey = process.env.API_KEY || "MISSING_KEY_PLACEHOLDER";
 const ai = new GoogleGenAI({ apiKey: apiKey });
 
