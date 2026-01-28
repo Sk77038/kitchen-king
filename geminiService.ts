@@ -1,12 +1,10 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult, Preferences } from "./types";
 
-// Declare process to satisfy TypeScript compiler during build
-declare const process: { env: { API_KEY?: string } };
-
 // Safe initialization:
-// We use process.env.API_KEY if available.
-// If it's missing, we use a placeholder. The App will catch the error when user tries to use it.
+// We use process.env.API_KEY. Types are handled by @types/node or vite config injection.
+// If process.env.API_KEY is undefined at runtime, we handle it with a fallback string to prevent immediate crash,
+// though the API call will eventually fail if key is invalid.
 const apiKey = process.env.API_KEY || "MISSING_KEY_PLACEHOLDER";
 const ai = new GoogleGenAI({ apiKey: apiKey });
 
