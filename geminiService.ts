@@ -1,6 +1,9 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult, Preferences } from "./types";
 
+// Declare process to satisfy TypeScript compiler during build
+declare const process: { env: { API_KEY?: string } };
+
 // Safe initialization:
 // We use process.env.API_KEY if available.
 // If it's missing, we use a placeholder. The App will catch the error when user tries to use it.
