@@ -1,9 +1,12 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult, Preferences } from "./types";
 
-// Initialize GoogleGenAI with process.env.API_KEY as per guidelines.
-// The API key is injected at build time via Vite's `define` config.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Safe initialization:
+// We use process.env.API_KEY if available.
+// If it's missing (e.g. during initial load or build), we use a placeholder string to prevent the app from crashing immediately with "API key required".
+// The actual API call will fail gracefully with an error message instead of a blank white screen.
+const apiKey = process.env.API_KEY || "MISSING_KEY_PLACEHOLDER";
+const ai = new GoogleGenAI({ apiKey: apiKey });
 
 const responseSchema = {
   type: Type.OBJECT,
@@ -73,6 +76,10 @@ export const analyzeFridgeImage = async (
   base64Image: string,
   preferences: Preferences
 ): Promise<AnalysisResult> => {
+  if (apiKey === "MISSING_KEY_PLACEHOLDER") {
+    throw new Error("API Key is missing. Please add API_KEY to your environment variables.");
+  }
+
   const model = "gemini-3-flash-preview";
   const prompt = getSystemPrompt(preferences, "an image of a refrigerator's contents");
 
@@ -105,6 +112,10 @@ export const searchRecipesByIngredients = async (
   ingredients: string,
   preferences: Preferences
 ): Promise<AnalysisResult> => {
+  if (apiKey === "MISSING_KEY_PLACEHOLDER") {
+    throw new Error("API Key is missing. Please add API_KEY to your environment variables.");
+  }
+
   const model = "gemini-3-flash-preview";
   const prompt = getSystemPrompt(preferences, `the user manually typed these ingredients: ${ingredients}`);
 
@@ -126,6 +137,10 @@ export const getIngredientSubstitution = async (
   recipeName: string,
   availableIngredients: string[] = []
 ): Promise<string> => {
+  if (apiKey === "MISSING_KEY_PLACEHOLDER") {
+    return "API Key missing. Cannot fetch substitution.";
+  }
+
   const model = "gemini-3-flash-preview";
   const contextItems = availableIngredients.length > 0 
     ? `Available ingredients in kitchen: ${availableIngredients.join(", ")}.`
