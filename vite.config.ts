@@ -2,15 +2,15 @@ import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig(({ mode }) => {
-  // Load env file based on `mode` in the current working directory.
-  // Using cast to any for process to avoid TS errors in some environments
+  // Use process.cwd() directly since this runs in Node environment where process is defined
   const env = loadEnv(mode, (process as any).cwd(), '');
   
   return {
     plugins: [react()],
     define: {
-      // Inject API Key safely. If missing, defaults to empty string to prevent build crash.
-      'process.env.API_KEY': JSON.stringify(env.API_KEY || env.VITE_API_KEY || "")
+      // Inject API Key safely. If missing, defaults to empty string.
+      // We explicitly access env.API_KEY to ensure it's picked up from environment variables
+      'process.env.API_KEY': JSON.stringify(env.API_KEY || "")
     },
     build: {
       outDir: 'dist',
