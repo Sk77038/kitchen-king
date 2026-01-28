@@ -1,0 +1,8 @@
+{
+  "name": "Kitchen King",
+  "description": "Professional AI-powered food and cooking assistant that generates recipes by analyzing photos of your refrigerator contents.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
