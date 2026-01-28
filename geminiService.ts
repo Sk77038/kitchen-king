@@ -1,8 +1,12 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult, Preferences } from "./types";
 
-// Note: process.env.API_KEY is replaced by Vite at build time.
-// @types/node provides the type definition for process, so we do NOT need to declare it manually here.
+// FORCE TypeScript to recognize process to prevent build failures.
+// Even though @types/node exists, frontend TS configs often exclude it.
+declare const process: any;
+
+// Safe initialization:
+// We use process.env.API_KEY. Types are handled by the declaration above.
 const apiKey = process.env.API_KEY || "MISSING_KEY_PLACEHOLDER";
 const ai = new GoogleGenAI({ apiKey: apiKey });
 
@@ -74,7 +78,7 @@ export const analyzeFridgeImage = async (
   base64Image: string,
   preferences: Preferences
 ): Promise<AnalysisResult> => {
-  if (apiKey === "MISSING_KEY_PLACEHOLDER") {
+  if (apiKey === "MISSING_KEY_PLACEHOLDER" || !apiKey) {
     throw new Error("API Key is missing. Please add API_KEY to your environment variables.");
   }
 
@@ -110,7 +114,7 @@ export const searchRecipesByIngredients = async (
   ingredients: string,
   preferences: Preferences
 ): Promise<AnalysisResult> => {
-  if (apiKey === "MISSING_KEY_PLACEHOLDER") {
+  if (apiKey === "MISSING_KEY_PLACEHOLDER" || !apiKey) {
     throw new Error("API Key is missing. Please add API_KEY to your environment variables.");
   }
 
@@ -135,7 +139,7 @@ export const getIngredientSubstitution = async (
   recipeName: string,
   availableIngredients: string[] = []
 ): Promise<string> => {
-  if (apiKey === "MISSING_KEY_PLACEHOLDER") {
+  if (apiKey === "MISSING_KEY_PLACEHOLDER" || !apiKey) {
     return "API Key missing. Cannot fetch substitution.";
   }
 
