@@ -1,13 +1,10 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult, Preferences } from "./types";
 
-// TS Fix: We use @ts-ignore to bypass TypeScript checking for process.env.
-// This allows the build to pass regardless of whether @types/node is included or not,
-// and prevents "Duplicate identifier" errors.
-// Vite replaces 'process.env.API_KEY' with the actual key string during the build.
-
+// TS Fix: We use @ts-ignore because process.env.VITE_API_KEY is injected by Vite at build time.
+// This is more robust than import.meta.env for this specific deployment issue.
 // @ts-ignore
-const apiKey = process.env.API_KEY;
+const apiKey = process.env.VITE_API_KEY;
 
 // Initialize AI only if key exists.
 const ai = apiKey ? new GoogleGenAI({ apiKey }) : null as any;
@@ -81,7 +78,7 @@ export const analyzeFridgeImage = async (
   preferences: Preferences
 ): Promise<AnalysisResult> => {
   if (!apiKey || apiKey === "MISSING_KEY_PLACEHOLDER") {
-    throw new Error("API Key is missing. Please add API_KEY to your environment variables.");
+    throw new Error("API Key is missing. Please add VITE_API_KEY to your environment variables.");
   }
 
   const model = "gemini-3-flash-preview";
@@ -117,7 +114,7 @@ export const searchRecipesByIngredients = async (
   preferences: Preferences
 ): Promise<AnalysisResult> => {
   if (!apiKey || apiKey === "MISSING_KEY_PLACEHOLDER") {
-    throw new Error("API Key is missing. Please add API_KEY to your environment variables.");
+    throw new Error("API Key is missing. Please add VITE_API_KEY to your environment variables.");
   }
 
   const model = "gemini-3-flash-preview";

@@ -12,11 +12,8 @@ interface ErrorBoundaryState {
 }
 
 // Error Boundary to catch crashes and show a UI instead of a blank screen
-class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  public state: ErrorBoundaryState = {
-    hasError: false,
-    error: null
-  };
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  public state: ErrorBoundaryState = { hasError: false, error: null };
 
   static getDerivedStateFromError(error: Error): ErrorBoundaryState {
     return { hasError: true, error };
@@ -31,8 +28,8 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
       return (
         <div style={{ padding: '20px', fontFamily: 'sans-serif', color: '#dc2626', textAlign: 'center', marginTop: '50px' }}>
           <h1 style={{ fontSize: '24px', marginBottom: '10px' }}>Something went wrong.</h1>
-          <p style={{ color: '#4b5563' }}>Please try refreshing the page.</p>
-          <pre style={{ marginTop: '20px', padding: '10px', background: '#f3f4f6', borderRadius: '8px', overflow: 'auto', textAlign: 'left', fontSize: '12px' }}>
+          <p style={{ color: '#4b5563' }}>Please refresh the page.</p>
+          <pre style={{ marginTop: '20px', padding: '10px', background: '#f3f4f6', borderRadius: '8px', overflow: 'auto', textAlign: 'left', fontSize: '12px', maxWidth: '100%' }}>
             {this.state.error?.toString()}
           </pre>
           <button 
@@ -45,7 +42,7 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
       );
     }
 
-    return this.props.children;
+    return (this as any).props.children;
   }
 }
 
