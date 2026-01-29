@@ -1,7 +1,11 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult, Preferences } from "./types";
 
+// Prevent TypeScript error "Cannot find name 'process'" during build
+declare const process: any;
+
 // Initialize AI using the environment variable as per guidelines
+// Vite replaces process.env.API_KEY with the actual string during build
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const responseSchema = {
