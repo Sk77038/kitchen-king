@@ -1,10 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult, Preferences } from "./types";
 
-// MANUAL DECLARATION: This prevents "Cannot find name 'process'" error during build (tsc).
-declare const process: any;
-
-// Initialize AI using process.env.API_KEY as per strict guidelines
+// Initialize AI using the environment variable as per guidelines
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 const responseSchema = {
