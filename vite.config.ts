@@ -12,9 +12,8 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     define: {
       // Securely inject the API key as a string constant during build.
-      // This works even if import.meta.env is not supported in the target environment.
       // We check both VITE_API_KEY and API_KEY to be safe.
-      'process.env.VITE_API_KEY': JSON.stringify(env.VITE_API_KEY || env.API_KEY || "")
+      'process.env.API_KEY': JSON.stringify(env.API_KEY || env.VITE_API_KEY || "")
     },
     build: {
       outDir: 'dist',
