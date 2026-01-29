@@ -1,14 +1,14 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult, Preferences } from "./types";
 
-// NOTE: We use @ts-ignore here to handle the API Key.
-// This prevents "Duplicate identifier 'process'" errors if @types/node is present,
-// AND prevents "Cannot find name 'process'" errors if it's missing.
-// Vite will replace 'process.env.API_KEY' with the actual string during the build.
+// TS Fix: Declare process to avoid "Cannot find name 'process'" or duplicate identifier errors.
+// Vite will replace process.env.API_KEY with the actual string at build time.
+declare const process: { env: { API_KEY: string } };
 
-// @ts-ignore
-const apiKey = process.env.API_KEY || "MISSING_KEY_PLACEHOLDER";
-const ai = new GoogleGenAI({ apiKey: apiKey });
+const apiKey = process.env.API_KEY;
+
+// Initialize AI only if key exists to prevent immediate crash, though we throw later if missing.
+const ai = apiKey ? new GoogleGenAI({ apiKey }) : null as any;
 
 const responseSchema = {
   type: Type.OBJECT,
@@ -78,7 +78,7 @@ export const analyzeFridgeImage = async (
   base64Image: string,
   preferences: Preferences
 ): Promise<AnalysisResult> => {
-  if (apiKey === "MISSING_KEY_PLACEHOLDER" || !apiKey) {
+  if (!apiKey || apiKey === "MISSING_KEY_PLACEHOLDER") {
     throw new Error("API Key is missing. Please add API_KEY to your environment variables.");
   }
 
@@ -114,7 +114,7 @@ export const searchRecipesByIngredients = async (
   ingredients: string,
   preferences: Preferences
 ): Promise<AnalysisResult> => {
-  if (apiKey === "MISSING_KEY_PLACEHOLDER" || !apiKey) {
+  if (!apiKey || apiKey === "MISSING_KEY_PLACEHOLDER") {
     throw new Error("API Key is missing. Please add API_KEY to your environment variables.");
   }
 
@@ -139,7 +139,7 @@ export const getIngredientSubstitution = async (
   recipeName: string,
   availableIngredients: string[] = []
 ): Promise<string> => {
-  if (apiKey === "MISSING_KEY_PLACEHOLDER" || !apiKey) {
+  if (!apiKey || apiKey === "MISSING_KEY_PLACEHOLDER") {
     return "API Key missing. Cannot fetch substitution.";
   }
 
