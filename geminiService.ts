@@ -1,13 +1,15 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { AnalysisResult, Preferences } from "./types";
 
-// TS Fix: Declare process to avoid "Cannot find name 'process'" or duplicate identifier errors.
-// Vite will replace process.env.API_KEY with the actual string at build time.
-declare const process: { env: { API_KEY: string } };
+// TS Fix: We use @ts-ignore to bypass TypeScript checking for process.env.
+// This allows the build to pass regardless of whether @types/node is included or not,
+// and prevents "Duplicate identifier" errors.
+// Vite replaces 'process.env.API_KEY' with the actual key string during the build.
 
+// @ts-ignore
 const apiKey = process.env.API_KEY;
 
-// Initialize AI only if key exists to prevent immediate crash, though we throw later if missing.
+// Initialize AI only if key exists.
 const ai = apiKey ? new GoogleGenAI({ apiKey }) : null as any;
 
 const responseSchema = {
